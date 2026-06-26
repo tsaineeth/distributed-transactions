@@ -1,2 +1,6 @@
-def main() -> None:
-    print("Hello from shared!")
+from shared.logging.logger import configure_logging, logger
+
+__all__ = [
+    "configure_logging",
+    "logger",
+]
