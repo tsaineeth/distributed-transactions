@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "aio-pika>=9.6.2",
+    "alembic>=1.18.5",
     "fastapi>=0.138.0",
     "pydantic-settings>=2.14.2",
     "shared",
