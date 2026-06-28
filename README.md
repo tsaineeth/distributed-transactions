@@ -1,4 +1,4 @@
-# Distributed Transactions
+# Distributed Transactions Framework
 
 A production-inspired distributed transaction platform demonstrating modern consistency patterns used in microservice architectures.
 

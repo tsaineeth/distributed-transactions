@@ -1,16 +1,28 @@
 [project]
 name = "inventory"
 version = "0.1.0"
-description = "Add your description here"
+description = "Inventory Service"
 readme = "README.md"
 authors = [
     { name = "Saineeth Togrikar", email = "tsaineeth@gmail.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "aio-pika>=9.6.2",
+    "alembic>=1.18.5",
+    "fastapi>=0.138.0",
+    "pydantic-settings>=2.14.2",
+    "shared",
+    "sqlalchemy>=2.0.51",
+    "structlog>=26.1.0",
+    "uvicorn>=0.49.0",
+]
 
 [project.scripts]
-inventory = "inventory:main"
+coordinator = "inventory:main"
+
+[tool.uv.sources]
+shared = { workspace = true }
 
 [build-system]
 requires = ["uv_build>=0.11.24,<0.12.0"]

@@ -1,53 +1,106 @@
 name: distributed-transactions
 
 services:
-  postgres:
-    image: postgres:17
+#  postgres:
+#    image: postgres:17
+#
+#    container_name: dt-postgres
+#
+#    restart: unless-stopped
+#
+#    env_file:
+#      - .env
+#
+#    ports:
+#      - "5432:5432"
+#
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#      - ./postgres/init:/docker-entrypoint-initdb.d
+#
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#
+#    networks:
+#      - dt-network
+#
+#  rabbitmq:
+#    image: rabbitmq:4-management
+#
+#    container_name: dt-rabbitmq
+#
+#    restart: unless-stopped
+#
+#    env_file:
+#      - .env
+#
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672"
+#
+#    volumes:
+#      - rabbitmq_data:/var/lib/rabbitmq
+#
+#    healthcheck:
+#      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#
+#    networks:
+#      - dt-network
 
-    container_name: dt-postgres
+  coordinator:
+    build:
+      context: ..
+      dockerfile: services/coordinator/Dockerfile
+
+    container_name: coordinator
 
     restart: unless-stopped
 
-    env_file:
-      - .env
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
 
     ports:
-      - "5432:5432"
+      - "8000:8000"
 
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/coordinator
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      SERVICE_NAME: coordinator
 
     networks:
       - dt-network
 
-  rabbitmq:
-    image: rabbitmq:4-management
+  inventory:
+    build:
+      context: ..
+      dockerfile: services/inventory/Dockerfile
 
-    container_name: dt-rabbitmq
+    container_name: inventory
 
     restart: unless-stopped
 
-    env_file:
-      - .env
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
 
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "8001:8000"
 
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/inventory
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      SERVICE_NAME: inventory
 
     networks:
       - dt-network

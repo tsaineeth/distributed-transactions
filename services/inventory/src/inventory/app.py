@@ -3,8 +3,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from coordinator.api import api_router
-from coordinator.config import get_settings
+from inventory.api import api_router
+from inventory.config import get_settings
 from shared.logging.logger import configure_logging
 
 
